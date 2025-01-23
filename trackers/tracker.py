@@ -128,7 +128,23 @@ class Tracker:
             
              
         return frame
+    
+    def draw_team_possession(self, frame, frame_num, team_possession):
+        overlay = frame.copy()
+        cv2.rectangle(overlay, (1350, 850), (1900, 970), (255, 255, 255), cv2.FILLED)
+        alpha = 0.4
+        cv2.addWeighted(overlay, alpha, frame, 1 - alpha, 0, frame)
         
+        team_possession_till_frame = team_possession[:frame_num+1]
+        team_1_possession = team_possession_till_frame[team_possession_till_frame == 1].shape[0]
+        team_2_possession = team_possession_till_frame[team_possession_till_frame == 2].shape[0]
+        team_1 = team_1_possession / (team_1_possession + team_2_possession)
+        team_2= team_2_possession / (team_1_possession + team_2_possession)
+        
+        cv2.putText(frame, f"Team 1 possession: {team_1*100:.2f}%", (1400, 900), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 3)
+        cv2.putText(frame, f"Team 2 possession: {team_2*100:.2f}%", (1400, 950), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 3)
+        
+        return frame
     
     def draw_triangle(self, frame, bbox, color):
         y= int(bbox[1])
@@ -141,7 +157,7 @@ class Tracker:
 
 
     
-    def draw_annotations(self, video_frames, tracks):
+    def draw_annotations(self, video_frames, tracks, team_possession):
         output_video_frames = []   
         for frame_num, frame in enumerate(video_frames):
             #frame = frame.copy()
@@ -161,7 +177,10 @@ class Tracker:
                 
             for track_id, ball in ball_dict.items():
                 frame = self.draw_triangle(frame, ball["bbox"], (0, 255, 0))
+            
+            frame = self.draw_team_possession(frame, frame_num, team_possession)
                 
+               
             output_video_frames.append(frame)
         
         return output_video_frames
