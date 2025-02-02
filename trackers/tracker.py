@@ -139,7 +139,7 @@ class Tracker:
         team_1_possession = team_possession_till_frame[team_possession_till_frame == 1].shape[0]
         team_2_possession = team_possession_till_frame[team_possession_till_frame == 2].shape[0]
         team_1 = team_1_possession / (team_1_possession + team_2_possession)
-        team_2= team_2_possession / (team_1_possession + team_2_possession)
+        team_2 = team_2_possession / (team_1_possession + team_2_possession)
         
         cv2.putText(frame, f"Team 1 possession: {team_1*100:.2f}%", (1400, 900), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 3)
         cv2.putText(frame, f"Team 2 possession: {team_2*100:.2f}%", (1400, 950), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 3)
